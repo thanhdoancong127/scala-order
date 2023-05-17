@@ -2,7 +2,7 @@ package domain.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OrderDetails(id: Long,
+case class OrderDetails(id: Option[Long],
                         orderId: Long,
                         productId: Long,
                         quantity: Int,

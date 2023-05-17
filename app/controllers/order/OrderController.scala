@@ -3,24 +3,31 @@ package controllers.order
 import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.actions.SecuredActionBuilder
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
-import controllers.products.ProductResource
-import domain.models.Product
-import httpclient.ExternalServiceException
 import play.api.Logger
 import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
+import play.api.data.Forms._
+import play.api.data.format.Formats.doubleFormat
+import play.api.libs.json.{JsString, Json, OFormat}
 import play.api.mvc._
-import services.{OrderService}
+import services.OrderService
 import utils.auth.{JWTEnvironment, WithRole}
 import utils.logging.RequestMarkerContext
 
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
-case class ProductFormInput(productName: String, price: BigDecimal, expDate: Option[String])
+case class OrderPostRequest(userId: Long, orderItemsRequest: Seq[OrderItemsRequest])
+
+object OrderPostRequest {
+    implicit val format: OFormat[OrderPostRequest] = Json.format[OrderPostRequest]
+}
+
+case class OrderItemsRequest(productId: Long, quantity: Int, price: Double)
+
+object OrderItemsRequest {
+    implicit val format: OFormat[OrderItemsRequest] =
+        Json.format[OrderItemsRequest]
+}
 
 /**
  * Takes HTTP requests and produces JSON.
@@ -30,18 +37,6 @@ class OrderController @Inject()(cc: ControllerComponents, orderService: OrderSer
 
     private val logger = Logger(getClass)
     private def SecuredAction: SecuredActionBuilder[JWTEnvironment, AnyContent] = silhouette.SecuredAction
-
-//    private val form: Form[OrderFormInput] = {
-//        import play.api.data.Forms._
-//
-//        Form(
-//            mapping(
-//                "productName" -> nonEmptyText(minLength = 0),
-//                "price" -> bigDecimal,
-//                "expDate" -> optional(text),
-//            )(OrderFormInput.apply)(OrderFormInput.unapply)
-//        )
-//    }
 
     def getById(id: Long): Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin", "User")).async { implicit request =>
         logger.trace(s"getById: $id")
@@ -86,43 +81,44 @@ class OrderController @Inject()(cc: ControllerComponents, orderService: OrderSer
                     }
             }
     }
-//
-//    def create: Action[AnyContent] =
-//        SecuredAction(WithRole[JWTAuthenticator]("Admin", "Operator")).async { implicit request =>
-//            logger.trace("create Product: ")
-//            processJsonProdudct(None)
-//        }
-//
-//    def update(id: Long): Action[AnyContent] =
-//        SecuredAction(WithRole[JWTAuthenticator]("Admin", "Operator")).async { implicit request =>
-//            logger.trace(s"update Product id: $id")
-//            processJsonProdudct(Some(id))
-//        }
-//
-//    private def processJsonProdudct[A](id: Option[Long])(implicit request: Request[A]): Future[Result] = {
-//
-//        def failure(badForm: Form[ProductFormInput]) = {
-//            Future.successful(BadRequest(JsString("Invalid Input")))
-//        }
-//
-//        def success(input: ProductFormInput) = {
-//            val outputFormat = new SimpleDateFormat("dd/MM/yyyy")
-//            val expDate = if (input.expDate.nonEmpty) new java.sql.Date(outputFormat.parse(input.expDate.get).getTime) else (new java.sql.Date(Calendar.getInstance().getTime().getTime()))
-//            // create a product from given form input
-//            val product = Product(id, input.productName, input.price, expDate)
-//
-//            if (id.nonEmpty) {
-//                OrderService.update(order).map { product =>
-//                    Created(Json.toJson(OrderResource.fromOrder(order)))
-//                }
-//            } else {
-//                OrderService.save(order).map { product =>
-//                    Created(Json.toJson(OrderResource.fromOrder(order)))
-//                }
-//            }
-//        }
-//
-//        form.bindFromRequest().fold(failure, success)
-//    }
 
+    def create: Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin", "Operator")).async { implicit request =>
+        logger.trace("create Product: ")
+        request.identity.role match {
+            case "Admin" => processJsonPost(None)
+            case "User" => processJsonPost(request.identity.id)
+            case _ => Future.successful(Forbidden)
+        }
+    }
+
+    private val orderItemsMapping = mapping(
+        "productId" -> longNumber,
+        "quantity" -> number,
+        "price" -> of(doubleFormat)
+    )(OrderItemsRequest.apply)(OrderItemsRequest.unapply)
+
+    private val formPost: Form[OrderPostRequest] = Form(
+        mapping(
+            "userId" -> longNumber,
+            "orderItemsRequest" -> seq(orderItemsMapping)
+        )(OrderPostRequest.apply)(OrderPostRequest.unapply)
+    )
+
+    private def processJsonPost[A](userId: Option[Long])(implicit request: Request[A]): Future[Result] = {
+
+        def failure(badForm: Form[OrderPostRequest]) = {
+            Future.successful(BadRequest(JsString("invalid input")))
+        }
+
+        def success(orderPostRequest: OrderPostRequest) = userId match {
+            case None => orderService.save(orderPostRequest).map { order =>
+                    Created(Json.toJson(order))
+                }
+            case Some(userId) => orderService.save(orderPostRequest.copy(userId = userId)).map { order =>
+                    Created(Json.toJson(order))
+                }
+        }
+
+        formPost.bindFromRequest().fold(failure, success)
+    }
 }

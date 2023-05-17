@@ -17,7 +17,7 @@ class OrderRouter @Inject()(controller: OrderController) extends SimpleRouter {
 
     case GET(p"/$id") => controller.getById(id.toLong)
 
-//    case POST(p"/") => controller.create
+    case POST(p"/") => controller.create
 
 //    case PUT(p"/$id") => controller.update(id.toLong)
 

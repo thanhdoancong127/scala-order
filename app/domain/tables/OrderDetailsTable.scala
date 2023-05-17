@@ -6,7 +6,7 @@ import slick.jdbc.PostgresProfile.api._
 class OrderDetailsTable(tag: Tag) extends Table[OrderDetails](tag, Some("scalaorder"), "order_details") {
 
   /** The ID column, which is the primary key and auto-incremented */
-  def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+  def id = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
 
   /** The order ID column */
   def orderId = column[Long]("order_id")

@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 /**
  * DTO for displaying OrderDetails information.
  */
-case class OrderDetailsResource(id: Long, productId: Long, quantity: Int, price: BigDecimal)
+case class OrderDetailsResource(id: Option[Long], productId: Long, quantity: Int, price: BigDecimal)
 
 object OrderDetailsResource {
 

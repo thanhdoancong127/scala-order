@@ -2,9 +2,11 @@ package services
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import domain.dao.{OrderDao, OrderDetailDao}
-import domain.models.{Order}
-import controllers.order.{OrderDetailsResource, OrderResource}
+import domain.models.{Order, OrderDetails}
+import controllers.order.{OrderDetailsResource, OrderPostRequest, OrderResource}
 
+import java.sql.Date
+import java.util.Calendar
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 /**
@@ -34,7 +36,7 @@ trait OrderService{
      * @param Order The Order to save.
      * @return The saved Order.
      */
-    def save(Order: Order): Future[Order]
+    def save(orderPostRequest: OrderPostRequest): Future[OrderResource]
 
     /**
      * Updates a Order.
@@ -72,7 +74,33 @@ class OrdererviceImpl @Inject()(orderDao: OrderDao,
         orders.map(order =>
             getOrderResponseAndItsItems(order)))
 
-    override def save(Order: Order): Future[Order] = orderDao.save(Order)
+    override def save(orderPostRequest: OrderPostRequest): Future[OrderResource] = {
+        var totalPrice: Double = 0;
+        var orderDetails = orderPostRequest.orderItemsRequest.map(orderItem => {
+            totalPrice = totalPrice + orderItem.price * orderItem.quantity
+            OrderDetails(
+                None,
+                0,
+                orderItem.productId,
+                orderItem.quantity,
+                orderItem.price
+            )
+        })
+        val order = Order(None, orderPostRequest.userId, new java.sql.Date(Calendar.getInstance().getTime().getTime()), totalPrice)
+        val savedOrder = orderDao.save(order)
+        savedOrder.map(order => {
+            var orderItemsResponse = List[OrderDetailsResource]()
+            orderDetails = orderDetails.map(orderDetail => {
+                orderItemsResponse = orderItemsResponse.appended(
+                    OrderDetailsResource.fromOrderDetails(orderDetail)
+                )
+                orderDetail.copy(orderId = order.id.get)
+            })
+            orderDetailDao.saveAll(orderDetails)
+
+            OrderResource.fromOrder(order).copy(orderItems = orderItemsResponse)
+        })
+    }
 
     override def update(Order: Order): Future[Order] = orderDao.update(Order)
 

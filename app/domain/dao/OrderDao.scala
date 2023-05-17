@@ -5,7 +5,7 @@ import domain.models.{Order, OrderDetails}
 import domain.tables.{OrderDetailsTable, OrderTable}
 import slick.jdbc.PostgresProfile.api._
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 /**
  * A pure non-blocking interface for accessing Orders table
@@ -19,7 +19,7 @@ trait OrderDao {
    * @param id The Order id to find.
    * @return The found Order or None if no Order for the given id could be found.
    */
-  def find(id: Long): (Future[Option[Order]], Future[Iterable[OrderDetails]])
+  def find(id: Long): Future[Option[Order]]
 
   /**
    * List all Orders.
@@ -70,14 +70,8 @@ trait OrderDao {
 class OrderDaoImpl @Inject()(daoRunner: DaoRunner)(implicit ec: DbExecutionContext) extends OrderDao {
 
     private val orders = TableQuery[OrderTable]
-    private val orderDetails = TableQuery[OrderDetailsTable]
 
-    override def find(id: Long): (Future[Option[Order]], Future[Iterable[OrderDetails]]) = {
-        val orderList = daoRunner.run {orders.filter(_.id === id).result.headOption}
-        val orderDetailsList = daoRunner.run {orderDetails.filter(_.id === id).result}
-
-        (orderList, orderDetailsList)
-    }
+    override def find(id: Long): Future[Option[Order]] = daoRunner.run {orders.filter(_.id === id).result.headOption}
 
     override def listAll(): Future[Iterable[Order]] = daoRunner.run {
         orders.result

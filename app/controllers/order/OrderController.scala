@@ -43,29 +43,49 @@ class OrderController @Inject()(cc: ControllerComponents, orderService: OrderSer
 //        )
 //    }
 
-    def getById(id: Long): Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin", "Operator")).async { implicit request =>
+    def getById(id: Long): Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin", "User")).async { implicit request =>
         logger.trace(s"getById: $id")
-        val (orders, orderDetailList) = orderService.find(id);
-        orders.map {
-            case Some(order) => Ok(Json.toJson(OrderResource.fromOrder(order)))
+        orderService.find(id).map {
+            case Some(order) => request.identity.role match {
+                case "Admin" => Ok(Json.toJson(order))
+                case "User" => {
+                    if (order.userId == request.identity.id.get) {
+                        Ok(Json.toJson(order))
+                    } else {
+                        Forbidden
+                    }
+                }
+            }
             case None => NotFound
         }
     }
 
-//    def getAll: Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin")).async { implicit request =>
-//        logger.trace("getAll Order")
-//        orderService.listAll().map { Order =>
-//            Ok(Json.toJson(Order.map(order => OrderResource.fromOrder(order))))
-//        }
-//    }
-//
-//    def delete(id: Long): Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin", "User")).async { implicit request =>
-//        logger.trace(s"Delete product: id = $id")
-//        OrderService.delete(id).map { deletedCnt =>
-//            if (deletedCnt == 1) Ok(JsString(s"Delete product $id successfully"))
-//            else BadRequest(JsString(s"Unable to delete product $id"))
-//        }
-//    }
+    def getAll: Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin")).async { implicit request =>
+        orderService.listAll().map { Order => Ok(Json.toJson(Order.map(order => order)))}
+    }
+
+    def delete(id: Long): Action[AnyContent] = SecuredAction(WithRole[JWTAuthenticator]("Admin", "User")).async { implicit request =>
+        logger.trace(s"delete order with id = $id")
+            request.identity.role match {
+                case "Admin" =>
+                    orderService.delete(id).map { deletedCnt =>
+                        if (deletedCnt == 1)
+                            Ok(JsString(s"delete order with id: $id successfully"))
+                        else BadRequest(JsString(s"unable to delete order with $id"))
+                    }
+                case "User" =>
+                    orderService.find(id).map {
+                        case Some(order) =>
+                            if (order.userId == request.identity.id.get) {
+                                orderService.delete(id)
+                                Ok(JsString(s"delete order with id: $id successfully"))
+                            } else {
+                                Forbidden
+                            }
+                        case None => NotFound
+                    }
+            }
+    }
 //
 //    def create: Action[AnyContent] =
 //        SecuredAction(WithRole[JWTAuthenticator]("Admin", "Operator")).async { implicit request =>

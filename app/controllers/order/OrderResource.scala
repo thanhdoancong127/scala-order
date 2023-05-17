@@ -1,16 +1,15 @@
 package controllers.order
 
-import domain.models.{Order, OrderDetails}
-import play.api.libs.json.{JsArray, JsBoolean, JsNull, JsNumber, JsObject, JsString, JsValue, Json, OFormat}
+import controllers.products.ProductResource
+import domain.models.Order
+import play.api.libs.json.{Json, OFormat}
 
 import java.text.SimpleDateFormat
-import scala.concurrent.Future
-import scala.util.Try
 
 /**
  * DTO for displaying post information.
  */
-case class OrderResource(id: Long, userId: Long, totalPrice: BigDecimal, orderDate: String)
+case class OrderResource(id: Long, userId: Long, totalPrice: BigDecimal, orderDate: String, orderItems: Seq[OrderDetailsResource])
 
 object OrderResource {
 
@@ -21,5 +20,5 @@ object OrderResource {
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
   def fromOrder(order: Order): OrderResource =
-      OrderResource(order.id.getOrElse(-1), order.userId, order.totalPrice, dateFormat.format(order.orderDate))
+      OrderResource(order.id.getOrElse(-1), order.userId, order.totalPrice, dateFormat.format(order.orderDate), List[OrderDetailsResource]())
 }

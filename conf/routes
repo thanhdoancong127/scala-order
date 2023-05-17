@@ -1,0 +1,23 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Authn & Authz Endpoints
+GET         /unsecured                         controllers.auth.UnsecuredResourceController.index
+
+POST        /signUp                            controllers.auth.AuthController.signUp
+
+POST        /login                            controllers.auth.AuthController.login
+
+# User Endpoints mapped one for all (redirected by Router)
+->          /v1/user                          controllers.user.UserRouter
+
+# Product Endpoints mapped one for all (redirected by Router)
+->          /v1/product                          controllers.products.ProductRouter
+
+# Order Endpoints mapped one for all (redirected by Router)
+->          /v1/order                          controllers.order.OrderRouter
+
+# Routing to external products endpoints
+GET          /v1/external/products                controllers.products.ProductsController.getAllExternal
+POST         /v1/external/products                controllers.products.ProductsController.createExternal

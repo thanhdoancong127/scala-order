@@ -1,0 +1,554 @@
+{
+	"info": {
+		"_postman_id": "093e8ad9-2812-4b0f-b39b-a31037146202",
+		"name": "Scala-Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "http://localhost:8080/v1/user/1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"thanhUser@nashtech.com\",\n    \"password\": \"1234567\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/signUp",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"thanhOperator@nashtech.com\",\n    \"role\": \"Operator\",\n    \"firstName\": \"Thanh\",\n    \"lastName\": \"Doan\",\n    \"password\": \"1234567\",\n    \"birthday\": null,\n    \"address\": null,\n    \"phoneNumber\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/signUp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"signUp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/user/1",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/user/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"user",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "thanhUser@nashtech.com",
+									"type": "default"
+								},
+								{
+									"key": "lastName",
+									"value": "Doan",
+									"type": "default"
+								},
+								{
+									"key": "firstName",
+									"value": "Thanh12",
+									"type": "default"
+								},
+								{
+									"key": "birthday",
+									"value": "07/08/2020",
+									"type": "default"
+								},
+								{
+									"key": "address",
+									"value": "Da Nang",
+									"type": "default"
+								},
+								{
+									"key": "phoneNumber",
+									"value": "0909123123",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "1234567",
+									"type": "default"
+								},
+								{
+									"key": "role",
+									"value": "User",
+									"type": "default"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/user/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"user",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/unsecured",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/unsecured",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"unsecured"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "http://localhost:8080/v1/product",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/product",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/product/1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/product/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"product",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productName\": \"Ao Khoac2\",\n    \"price\": 100000,\n    \"expirationDate\": \"2023/12/12\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/product",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/product/1",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/product/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"product",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/product/1",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productName\": \"Ao Khoac1\",\r\n    \"price\": 100000,\r\n    \"expirationDate\": \"2023/12/12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/product/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"product",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "http://localhost:8080/v1/order/1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/order/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"order",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/order/1",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/order/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"order",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/v1/order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth",
+								"value": "{{X-Auth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 10,\n    \"orderItemsRequest\": [\n        {\n            \"productId\": 1,\n            \"quantity\": 20000,\n            \"price\": 20000 \n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "X-Auth",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxLUNCNnBnQVRBZFwvUmR6XC82Q0tNanpTekwySmVqSVEySW1lTHNHeHRiZUI3MkxNZ0xyZndJem9RQ3VaQ3EzeW9va2ZrNmdzY0xHdkhITzBXSUJOV1ZyNHpzSTlIck9rZlROaXdqOVdRdHhPbFdPQkZ6TTlUYmUiLCJpc3MiOiJTY2FsYURlbW8iLCJleHAiOjE2ODA0NTM1NTQsImlhdCI6MTY4MDQ0Mjc1NCwianRpIjoiNzg0MWViMWQyNTkwOGFkOWUxOTUyMzIwMDQyYWVkODQzZmUyNTA2ZDYyOWJjYWM2ZWY2OWExMjkyMTAxMmUzM2I1ZGVjNzhjMjBkOTZkYzAzNWVkNWY5OTQ2NTE4OTk0OGU3MjFjYmQ0YjUzNjcyNmQ5NzU4NjJmOTkxZGVlNmFjMTdhMGQwYzhlZTQ3NTRhYjIxNTFlNjQyNDQ0YmUxY2ZjNTUzMTY4ZDE0MzJjOWY0ZDE4MzcwMDVmZTAyMDU5NTAxM2FiNWVmMjE3MDliMzA4NDNlOWEzNWVjNzExZWRjODBjZjI0Mzk0ZjVhMDVkOWIyZGQ4MTNkYTNmMTNmMSJ9.ELl6vjWJPsKe3OD-TNRcK_FBIqpJUtt38EiWPrxmATA"
+		}
+	]
+}
